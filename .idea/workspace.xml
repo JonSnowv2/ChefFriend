@@ -10,18 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="94c7e5be-baae-479e-b09e-b3775270d533" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/food.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Classes/recipe.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Classes/user.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Styles/Shadows.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Widgets/container_recipe.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/homepage.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/profile_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my_app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/my_app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/widget_test.dart" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
