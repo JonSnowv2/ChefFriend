@@ -1,5 +1,13 @@
+import 'dart:convert';
+
+List<Recipe> recipeFromJson(String str){
+  List<dynamic> jsonData = json.decode(str);
+
+  return jsonData.map((json) => Recipe.fromJson(json)).toList();
+}
 
 class Recipe {
+  int _id = 0;
   String _title = '';
   String _description = '';
   String _instructions = '';
@@ -8,6 +16,7 @@ class Recipe {
   String _image = '';
 
   Recipe({
+    required id,
     required title,
     required description,
     required instructions,
@@ -15,6 +24,7 @@ class Recipe {
     required category,
     required image
   }):
+      _id = id,
       _title = title,
       _description = description,
       _instructions = instructions,
@@ -22,6 +32,26 @@ class Recipe {
       _category = category,
       _image = image;
 
+  factory Recipe.fromJson(Map<String, dynamic> json){
+    List<String> ingredientsList = json["ingredients"].split(',');
+
+    return Recipe(
+      id: json["id"],
+      title: json["title"],
+      description: json["description"],
+      instructions: json["instructions"],
+      category: json["category"],
+      image: json["image"],
+      ingredients: ingredientsList,
+    );
+  }
+
+
+  int get id => _id;
+
+  set id(int value) {
+    _id = value;
+  }
 
   String get image => _image;
 
