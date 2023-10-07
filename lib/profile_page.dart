@@ -16,6 +16,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
   void _printRecipes() {
     for (var i = 0; i < widget.recipes.length; i++) {
       print(widget.recipes[i].title);
@@ -62,8 +63,12 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: ListView.builder(
                   itemCount: widget.recipes.length,
-                  itemBuilder: (context, index) =>
-                      ContainerRecipe(recipe: widget.recipes[index], Function: (){_removeRecipe(widget.recipes[index]);},)),
+                  itemBuilder: (context, index) {
+                    String base64Image = widget.recipes[index].image;
+                    String dataUri = "data:image/jpeg;base64,$base64Image";
+                      return ContainerRecipe(recipe: widget.recipes[index], Function: (){_removeRecipe(widget.recipes[index]);}, imageUrl: dataUri,);
+                  }
+              ),
             )
           ],
         ),

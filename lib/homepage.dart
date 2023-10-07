@@ -32,12 +32,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void add_recipe(Recipe recipe){
-    setState(() {
-      recipes.add(recipe);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -67,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Container(
                         child: Center(
-                          child: CreateActivityPage(addRecipe: add_recipe),
+                          child: CreateActivityPage(),
                         ),
                       ),
                       Container(

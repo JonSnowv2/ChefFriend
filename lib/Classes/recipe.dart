@@ -10,7 +10,7 @@ class Recipe {
   int _id = 0;
   String _title = '';
   String _description = '';
-  String _instructions = '';
+  List<String> _instructions = [];
   List<String> _ingredients = [];
   String _category = '';
   String _image = '';
@@ -34,12 +34,13 @@ class Recipe {
 
   factory Recipe.fromJson(Map<String, dynamic> json){
     List<String> ingredientsList = json["ingredients"].split(',');
+    List<String> instructionsList = json["instructions"].split(',');
 
     return Recipe(
       id: json["id"],
       title: json["title"],
       description: json["description"],
-      instructions: json["instructions"],
+      instructions: instructionsList,
       category: json["category"],
       image: json["image"],
       ingredients: ingredientsList,
@@ -71,9 +72,9 @@ class Recipe {
     _ingredients = value;
   }
 
-  String get instructions => _instructions;
+  List<String> get instructions => _instructions;
 
-  set instructions(String value) {
+  set instructions(List<String> value) {
     _instructions = value;
   }
 

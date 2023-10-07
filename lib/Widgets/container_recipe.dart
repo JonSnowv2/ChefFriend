@@ -6,8 +6,14 @@ import '../Service/recipe_service.dart';
 class ContainerRecipe extends StatefulWidget {
   final Recipe recipe;
   final VoidCallback Function;
+  final String? imageUrl;
 
-  const ContainerRecipe({Key? key, required this.recipe, required this.Function}) : super(key: key);
+  const ContainerRecipe({
+    Key? key,
+    required this.recipe,
+    required this.Function,
+    this.imageUrl,
+  }) : super(key: key);
 
   @override
   _ContainerRecipeState createState() => _ContainerRecipeState();
@@ -34,9 +40,9 @@ class _ContainerRecipeState extends State<ContainerRecipe> {
               flex: 1,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  child: Image(image: AssetImage('assets/food.jpg')),
-                ),
+                child: widget.imageUrl != null
+                    ? Image.network(widget.imageUrl!)
+                    : Container(),
               ),
             ),
             Expanded(
@@ -45,7 +51,6 @@ class _ContainerRecipeState extends State<ContainerRecipe> {
                 children: [
                   Text(widget.recipe.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
                   Text(widget.recipe.category, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                  // Display ingredients as a column
                 ],
               ),
             ),
@@ -54,7 +59,7 @@ class _ContainerRecipeState extends State<ContainerRecipe> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: widget.recipe.ingredients
-                    .map((ingredient) => Text('- $ingredient', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)))
+                    .map((ingredient) => Text('-$ingredient', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)))
                     .toList(),
               ),
             ),
@@ -71,6 +76,7 @@ class _ContainerRecipeState extends State<ContainerRecipe> {
                 ),
                 IconButton(
                   onPressed: () {
+                    // Handle edit action
                   },
                   icon: Icon(Icons.edit),
                 ),

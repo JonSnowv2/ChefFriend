@@ -21,7 +21,7 @@ Future<List<Map<String, dynamic>>> fetchRecipeData() async{
 }
 
 Future<void> deleteRecipe(int recipeId) async {
-  final apiUrl = 'http://192.168.1.213:8081/api/recipes/$recipeId'; // Replace with your API URL
+  final apiUrl = 'http://192.168.1.213:8081/api/recipes/$recipeId';
 
   try {
     final response = await http.delete(Uri.parse(apiUrl));
@@ -35,7 +35,7 @@ Future<void> deleteRecipe(int recipeId) async {
   }
 }
 
-Future<void> createRecipe(String title, String description, List<String> ingredients, String instructions, String category, String image) async {
+Future<void> createRecipe(String title, String description, List<String> ingredients, List<String> instructions, String category, String image) async {
   const url = 'http://127.0.0.1:8081/api/recipes/add';
 
   try {
