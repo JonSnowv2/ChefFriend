@@ -1,27 +1,58 @@
+import 'dart:convert';
+
+List<User> userFromJson(String str){
+  List<dynamic> jsonData = json.decode(str);
+
+  return jsonData.map((json) => User.fromJson(json)).toList();
+}
+
 class User{
   String _username = '';
+  String _name = '';
   String _password = '';
-  List<int> _recpies = [];
+  List<dynamic> _recipes = [];
 
   User({
     required username,
     required password,
-    required recipies,
+    required recipes,
+    required name
   }):
       _username = username,
       _password = password,
-      _recpies = recipies;
+      _recipes = recipes,
+      _name = name;
 
-  List<int> get recpies => _recpies;
+  factory User.fromJson(Map<String, dynamic> json){
 
-  set recpies(List<int> value) {
-    _recpies = value;
+    return User(
+      username: json['username'] ?? '',
+      name: json['name'] ?? '',
+      password: json['password'] ?? '',
+      recipes: json['recipes'] != null ? List<int>.from(json['recipes']) : [],
+    );
+  }
+
+  List<dynamic> get recipes => _recipes;
+
+  set recipes(List<dynamic> value) {
+    _recipes = value;
+  }
+
+  List<int> get recipesAsInt {
+    return _recipes.map((recipe) => recipe as int).toList();
   }
 
   String get password => _password;
 
   set password(String value) {
     _password = value;
+  }
+
+  String get name => _name;
+
+  set name(String value) {
+    _name = value;
   }
 
   String get username => _username;

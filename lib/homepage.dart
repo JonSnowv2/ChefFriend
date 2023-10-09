@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  User user = User(username: "Darius", password: "Cascador22", recipies: [1, 2]);
+  User user = User(username: "Darius", password: "Cascador22", recipes: [1, 2], name: "User");
   List<Recipe> recipes = [];
 
   @override
@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    user = ModalRoute.of(context)?.settings.arguments as User;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
