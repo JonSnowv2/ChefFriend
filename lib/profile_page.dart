@@ -16,21 +16,20 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   void _printRecipes() {
     for (var i = 0; i < widget.recipes.length; i++) {
       print(widget.recipes[i].title);
     }
   }
 
-  void _removeRecipe(Recipe recipe){
+  void _removeRecipe(Recipe recipe) {
     widget.recipes.remove(recipe);
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
       body: Container(
         color: Colors.white,
         child: Column(
@@ -62,12 +61,18 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             Expanded(
               child: ListView.builder(
-                  itemCount: widget.recipes.length,
-                  itemBuilder: (context, index) {
-                    String base64Image = widget.recipes[index].image;
-                    String dataUri = "data:image/jpeg;base64,$base64Image";
-                      return ContainerRecipe(recipe: widget.recipes[index], Function: (){_removeRecipe(widget.recipes[index]);}, imageUrl: dataUri,);
-                  }
+                itemCount: widget.recipes.length,
+                itemBuilder: (context, index) {
+                  String base64Image = widget.recipes[index].image;
+                  String dataUri = "data:image/jpeg;base64,$base64Image";
+                  return ContainerRecipe(
+                    recipe: widget.recipes[index],
+                    Function: () {
+                      _removeRecipe(widget.recipes[index]);
+                    },
+                    imageUrl: dataUri,
+                  );
+                },
               ),
             )
           ],
@@ -76,3 +81,4 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+

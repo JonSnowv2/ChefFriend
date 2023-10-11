@@ -11,10 +11,9 @@ import 'Service/recipe_service.dart';
 import 'Service/user_service.dart';
 
 class CreateActivityPage extends StatefulWidget {
-  final AuthService authService;
 
 
-  const CreateActivityPage({super.key, required this.authService});
+  const CreateActivityPage({super.key});
 
   @override
   State<CreateActivityPage> createState() => _CreateActivityPageState();
@@ -109,6 +108,9 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
     }
   }
 
+  String? getToken() {
+    return html.window.localStorage['token'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,10 +135,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                     ),
                   ),
                   TextButton(
-                      onPressed: () async{
-                        final token = await widget.authService.getToken();
+                      onPressed: (){
+                        final token = getToken();
                         if (token != null) {
-                          _onSubmit(token!);
+                          _onSubmit(token);
                         }
                         },
                       child: Icon(Icons.add)

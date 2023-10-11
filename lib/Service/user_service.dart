@@ -4,15 +4,9 @@ import 'package:http/http.dart' as http;
 import '../Classes/user.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-Future<void> storeToken(String token) async {
+void storeToken(String token) async {
   html.window.localStorage['token'] = token;
 }
-
-Future<String?> getToken() async {
-  return html.window.localStorage['token'];
-}
-
-
 
 void registerUser(String username, String name, String password) async {
   final url = Uri.parse('http://127.0.0.1:8081/register');

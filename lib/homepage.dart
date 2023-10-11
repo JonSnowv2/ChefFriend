@@ -6,6 +6,7 @@ import 'Classes/recipe.dart';
 import 'Classes/user.dart';
 import 'Service/user_service.dart';
 import 'profile_page.dart';
+import 'dart:html' as html;
 
 class HomePage extends StatefulWidget {
 
@@ -16,14 +17,42 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  User user = User(username: "Darius", password: "Cascador22", recipes: [1, 2], name: "User");
+  User? user;
   List<Recipe> recipes = [];
   bool dataFetched = false;
 
-  Future<void> getData() async {
-    if (!dataFetched) {
-      String? token = await widget.authService.getToken();
-      final recipeData = await fetchRecipeData(token!);
+  String? getToken() {
+    return html.window.localStorage['token'];
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    String? token = html.window.localStorage['token'];
+    print('Got the token: $token');
+    if (token != null) {
+      print('Token is not null');
+      final userArgument = ModalRoute.of(context)?.settings.arguments;
+      print('Got the userArgument: $userArgument');
+      if (userArgument is User) {
+        print('It is the user!');
+        user = userArgument;
+        print('It is ${user!.username}');
+        retrieveTokenAndData();
+        print('executed till the very end');
+      }
+    } else {
+      print(' oh no, the token is null :(');
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
+
+  // Function to retrieve token from local storage and fetch data
+  Future<void> retrieveTokenAndData() async {
+    String? token = getToken();
+    if (token != null) {
+      final recipeData = await fetchRecipeData(token);
       setState(() {
         recipes = recipeFromJson(json.encode(recipeData));
         dataFetched = true;
@@ -31,15 +60,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
 
   @override
   Widget build(BuildContext context) {
-    user = ModalRoute.of(context)?.settings.arguments as User;
+    if (user == null) {
+      // Handle the case when the user hasn't been loaded yet (e.g., during initialization)
+      return RefreshProgressIndicator();
+    }
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -63,32 +90,20 @@ class _HomePageState extends State<HomePage> {
               child: TabBarView(
                 children: [
                   Container(
-                    child: FutureBuilder(
-                      future: getData(), // Use the fetched data here
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          // While fetching data
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          // Handle errors
-                          return Text("Error: ${snapshot.error}");
-                        } else {
-                          // Display data when fetched
-                          return ProfilePage(user: user, recipes: recipes);
-                        }
-                      },
+                    child: dataFetched
+                        ? ProfilePage(user: user!, recipes: recipes)
+                        : CircularProgressIndicator(), // Show a loading indicator until data is fetched
+                  ),
+                  Container(
+                    child: Center(
+                      child: CreateActivityPage(),
                     ),
                   ),
                   Container(
                     child: Center(
-                      child: CreateActivityPage(authService: widget.authService),
+                      child: Text("3RD TAB"),
                     ),
                   ),
-                Container(
-                  child: Center(
-                    child: Text("3ST TAB"),
-                  ),
-                ),
                 ],
               ),
             ),
