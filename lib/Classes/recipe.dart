@@ -14,6 +14,7 @@ class Recipe {
   List<String> _ingredients = [];
   String _category = '';
   String _image = '';
+  String _user_username = '';
 
   Recipe({
     required id,
@@ -22,7 +23,8 @@ class Recipe {
     required instructions,
     required ingredients,
     required category,
-    required image
+    required image,
+    required user_username
   }):
       _id = id,
       _title = title,
@@ -30,7 +32,8 @@ class Recipe {
       _instructions = instructions,
       _ingredients = ingredients,
       _category = category,
-      _image = image;
+      _image = image,
+      _user_username = user_username;
 
   factory Recipe.fromJson(Map<String, dynamic> json){
     List<String> ingredientsList = json["ingredients"].split(',');
@@ -44,6 +47,7 @@ class Recipe {
       category: json["category"],
       image: json["image"],
       ingredients: ingredientsList,
+      user_username: json['user_username']
     );
   }
 

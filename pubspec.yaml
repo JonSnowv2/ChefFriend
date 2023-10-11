@@ -38,6 +38,7 @@ dependencies:
   http: ^1.1.0
   universal_html: ^2.0.10
   flutter_image_compress: ^2.0.4
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:

@@ -7,7 +7,9 @@ import 'Service/user_service.dart';
 import 'Widgets/input_text_create.dart';
 
 class LogInPage extends StatelessWidget {
-  const LogInPage({super.key});
+  final AuthService authService;
+
+  const LogInPage({super.key, required this.authService});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class LogInPage extends StatelessWidget {
             TextBarCreateRecipe(Controller: passwordController, type: 'Password'),
             TextButton(
                 onPressed: () async {
-                  final user = await loginUser(usernameController.text, passwordController.text);
+                  final user = await loginUser(usernameController.text, passwordController.text, authService);
                   if (user != null) {
                     Navigator.pushNamed(
                       context,

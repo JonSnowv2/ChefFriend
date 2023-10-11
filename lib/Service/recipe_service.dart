@@ -1,23 +1,24 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-Future<List<Map<String, dynamic>>> fetchData(String url) async{
-  final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200){
+Future<List<Map<String, dynamic>>> fetchRecipeData(String token) async {
+  String url = 'http://192.168.1.213:8081/api/recipes';
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
     List<dynamic> data = json.decode(response.body);
     List<Map<String, dynamic>> recipes = data.cast<Map<String, dynamic>>();
     return recipes;
-  }
-  else{
+  } else {
     throw Exception("Failed to load recipes");
   }
-}
-
-Future<List<Map<String, dynamic>>> fetchRecipeData() async{
-  const url = 'http://127.0.0.1:8081/api/recipes';
-
-  return fetchData(url);
 }
 
 Future<void> deleteRecipe(int recipeId) async {
@@ -35,13 +36,16 @@ Future<void> deleteRecipe(int recipeId) async {
   }
 }
 
-Future<void> createRecipe(String title, String description, List<String> ingredients, List<String> instructions, String category, String image) async {
+Future<void> createRecipe(String title, String description, List<String> ingredients, List<String> instructions, String category, String image, String token) async {
   const url = 'http://127.0.0.1:8081/api/recipes/add';
 
   try {
     final response = await http.post(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode({
         'title': title,
         'description': description,
@@ -61,3 +65,4 @@ Future<void> createRecipe(String title, String description, List<String> ingredi
     print('Error creating recipe: $error');
   }
 }
+

@@ -3,15 +3,18 @@ import 'dart:html' as html;
 import 'dart:typed_data';
 import 'package:my_app/Widgets/input_text_create.dart';
 import 'package:universal_html/html.dart' as html;
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Classes/recipe.dart';
 import 'Service/recipe_service.dart';
+import 'Service/user_service.dart';
 
 class CreateActivityPage extends StatefulWidget {
+  final AuthService authService;
 
-  const CreateActivityPage({super.key});
+
+  const CreateActivityPage({super.key, required this.authService});
 
   @override
   State<CreateActivityPage> createState() => _CreateActivityPageState();
@@ -91,7 +94,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
     _selectedImageBase64 = base64Image;
   }
 
-  void _onSubmit() {
+  void _onSubmit(String? token) {
     if (_selectedImageBase64 != null) {
       createRecipe(
         _titleController.text,
@@ -100,6 +103,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         instructions,
         _categoryController.text,
         _selectedImageBase64!,
+        token!,
       );
       html.window.location.reload();
     }
@@ -129,8 +133,11 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                     ),
                   ),
                   TextButton(
-                      onPressed: () {
-                        _onSubmit();
+                      onPressed: () async{
+                        final token = await widget.authService.getToken();
+                        if (token != null) {
+                          _onSubmit(token!);
+                        }
                         },
                       child: Icon(Icons.add)
                   )
