@@ -12,7 +12,6 @@ import 'Service/user_service.dart';
 
 class CreateActivityPage extends StatefulWidget {
 
-
   const CreateActivityPage({super.key});
 
   @override
@@ -104,7 +103,6 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         _selectedImageBase64!,
         token!,
       );
-      html.window.location.reload();
     }
   }
 
@@ -153,14 +151,28 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                       children: [
                         Expanded(
                           flex:1,
-                          child: TextBarCreateRecipe(Controller: _titleController, type: "Title",)
+                          child: CoolTextBar(
+                            Controller: _titleController,
+                            type: "Title",
+                            validator: (value){
+                              if(value!.isEmpty){
+                                return "Please Enter a title";
+                              }
+                            },
+                          )
                         ),
                         SizedBox(
                           width: 50,
                         ),
                         Expanded(
                         flex: 1,
-                            child: TextBarCreateRecipe(Controller: _categoryController, type: "Category",)
+                            child: CoolTextBar(
+                              Controller: _categoryController,
+                              type: "Category",
+                              validator: (value){
+
+                              },
+                            )
                         ),
                       ],
                     ),
@@ -172,7 +184,13 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                           flex: 1,
                           child: Column(
                             children: [
-                              TextBarCreateRecipe(Controller: _ingredientsController, type: "Ingredients",),
+                              CoolTextBar(
+                                Controller: _ingredientsController,
+                                type: "Ingredients",
+                                validator: (value){
+
+                                },
+                              ),
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: TextButton(
@@ -202,7 +220,15 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                         ),
                         Expanded(
                           flex: 2,
-                          child: TextBarCreateRecipe(Controller: _descriptionController, type: "Description",)
+                          child: CoolTextBar(
+                            Controller: _descriptionController,
+                            type: "Description",
+                            validator: (value){
+                              if(value!.length < 60){
+                                return "Must be at least 60 characters!";
+                              }
+                            },
+                          )
                         ),
                       ],
                     ),
@@ -236,7 +262,13 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                         flex: 1,
                         child: Column(
                           children: [
-                            TextBarCreateRecipe(Controller: _instructionsController, type: "Instructions",),
+                            CoolTextBar(
+                              Controller: _instructionsController,
+                              type: "Instructions",
+                              validator: (value){
+
+                              },
+                            ),
                             Align(
                               alignment: Alignment.topLeft,
                               child: TextButton(

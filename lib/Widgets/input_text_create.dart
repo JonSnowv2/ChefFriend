@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class TextBarCreateRecipe extends StatefulWidget {
+class CoolTextBar extends StatefulWidget {
   TextEditingController Controller;
   String type;
+  final FormFieldValidator<String>? validator;
 
-  TextBarCreateRecipe({super.key, required this.Controller, required this.type});
+  CoolTextBar({super.key, required this.Controller, required this.type, required this.validator});
 
   @override
-  State<TextBarCreateRecipe> createState() => _TextBarCreateRecipeState();
+  State<CoolTextBar> createState() => _CoolTextBarState();
 }
 
-class _TextBarCreateRecipeState extends State<TextBarCreateRecipe> {
+class _CoolTextBarState extends State<CoolTextBar> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -28,6 +29,7 @@ class _TextBarCreateRecipeState extends State<TextBarCreateRecipe> {
           )
       ),
       controller: widget.Controller,
+      validator: widget.validator,
     );
   }
 }

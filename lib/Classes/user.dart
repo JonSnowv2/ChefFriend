@@ -25,11 +25,18 @@ class User{
 
   factory User.fromJson(Map<String, dynamic> json){
 
+    final recipesData = json['recipes'];
+    List<int> recipes = [];
+
+    if (recipesData is List) {
+      recipes = recipesData.cast<int>();
+    }
+
     return User(
       username: json['username'] ?? '',
       name: json['name'] ?? '',
       password: json['password'] ?? '',
-      recipes: json['recipes'] != null ? List<int>.from(json['recipes']) : [],
+      recipes: recipes,
     );
   }
 

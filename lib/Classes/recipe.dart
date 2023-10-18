@@ -35,6 +35,12 @@ class Recipe {
       _image = image,
       _user_username = user_username;
 
+  String get user_username => _user_username;
+
+  set user_username(String value) {
+    _user_username = value;
+  }
+
   factory Recipe.fromJson(Map<String, dynamic> json){
     List<String> ingredientsList = json["ingredients"].split(',');
     List<String> instructionsList = json["instructions"].split(',');

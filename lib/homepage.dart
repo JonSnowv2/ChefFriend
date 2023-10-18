@@ -9,15 +9,15 @@ import 'profile_page.dart';
 import 'dart:html' as html;
 
 class HomePage extends StatefulWidget {
+  final User? user;
 
-  HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key, required this.user}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  User? user;
   List<Recipe> recipes = [];
   bool dataFetched = false;
 
@@ -26,63 +26,68 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    fetchAndSetRecipes();
+  }
 
-    String? token = html.window.localStorage['token'];
-    print('Got the token: $token');
-    if (token != null) {
-      print('Token is not null');
-      final userArgument = ModalRoute.of(context)?.settings.arguments;
-      print('Got the userArgument: $userArgument');
-      if (userArgument is User) {
-        print('It is the user!');
-        user = userArgument;
-        print('It is ${user!.username}');
-        retrieveTokenAndData();
-        print('executed till the very end');
+  Future<void> fetchAndSetRecipes() async {
+    try {
+      String? token = getToken();
+      if (token != null) {
+        List<Map<String, dynamic>> fetchedRecipeData = await fetchRecipeData(token);
+
+        List<Recipe> fetchedRecipes = [];
+        for (Map<String, dynamic> recipeMap in fetchedRecipeData) {
+          Recipe recipe = Recipe.fromJson(recipeMap);
+          fetchedRecipes.add(recipe);
+        }
+        setState(() {
+          recipes = fetchedRecipes;
+          dataFetched = true;
+        });
+      } else {
+        print('Token is missing. Please log in.');
       }
-    } else {
-      print(' oh no, the token is null :(');
-      Navigator.of(context).pushReplacementNamed('/login');
+    } catch (e) {
+      print('Error fetching recipes: $e');
     }
   }
 
-  // Function to retrieve token from local storage and fetch data
-  Future<void> retrieveTokenAndData() async {
-    String? token = getToken();
-    if (token != null) {
-      final recipeData = await fetchRecipeData(token);
-      setState(() {
-        recipes = recipeFromJson(json.encode(recipeData));
-        dataFetched = true;
-      });
-    }
+  Future<void> refreshRecipes() async {
+    await fetchAndSetRecipes();
   }
-
 
   @override
   Widget build(BuildContext context) {
-    if (user == null) {
-      // Handle the case when the user hasn't been loaded yet (e.g., during initialization)
-      return RefreshProgressIndicator();
-    }
+    if (!dataFetched)
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: null,
         body: Column(
           children: [
             Container(
               color: Colors.deepOrange,
-              child: TabBar(
-                labelColor: Colors.blue,
-                unselectedLabelColor: Colors.white,
-                indicatorColor: Colors.blue,
-                tabs: [
-                  Tab(icon: Icon(Icons.person), text: "Profile Page"),
-                  Tab(icon: Icon(Icons.add), text: "Add Recipe"),
-                  Tab(icon: Icon(Icons.home), text: "Recipes"),
+              child: Stack(
+                children: [
+                  TabBar(
+                    labelColor: Colors.blue,
+                    unselectedLabelColor: Colors.white,
+                    indicatorColor: Colors.blue,
+                    tabs: [
+                      Tab(icon: Icon(Icons.person), text: "Profile Page"),
+                      Tab(icon: Icon(Icons.add), text: "Add Recipe"),
+                      Tab(icon: Icon(Icons.home), text: "Recipes"),
+                    ],
+                  ),
+                  IconButton(onPressed: ()
+                  {
+                    refreshRecipes();
+                  },
+                      icon: Icon(Icons.refresh)),
                 ],
               ),
             ),
@@ -90,20 +95,12 @@ class _HomePageState extends State<HomePage> {
               child: TabBarView(
                 children: [
                   Container(
-                    child: dataFetched
-                        ? ProfilePage(user: user!, recipes: recipes)
-                        : CircularProgressIndicator(), // Show a loading indicator until data is fetched
+                    child: ProfilePage(user: widget.user!, recipes: recipes),
                   ),
                   Container(
-                    child: Center(
-                      child: CreateActivityPage(),
-                    ),
+                    child: CreateActivityPage(),
                   ),
-                  Container(
-                    child: Center(
-                      child: Text("3RD TAB"),
-                    ),
-                  ),
+                  Container(child: Text('3rd tab')),
                 ],
               ),
             ),
