@@ -9,8 +9,11 @@ class CompleteMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Blue,
       padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Blue,
+      ),
       child: Text(
         message,
         style: TextStyle(

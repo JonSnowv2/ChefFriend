@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:html' as html;
 import 'package:http/http.dart' as http;
+import 'package:my_app/Service/recipe_service.dart';
+import '../Classes/recipe.dart';
 import '../Classes/user.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -88,6 +90,76 @@ Future<User?> loginUser(String username, String password) async {
 
   return null;
 }
+
+Future<User?> fetchUserData(String token) async {
+  final url = Uri.parse('http://127.0.0.1:8081/api/return_user');
+  print(token);
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final dynamic responseData = json.decode(response.body);
+
+      if (responseData is Map<String, dynamic> && responseData.containsKey('user')) {
+        return User.fromJson(responseData['user']);
+      } else {
+        print('Invalid response format from the server.');
+      }
+    } else {
+      print('Failed to fetch user data with status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error during fetching user data: $e');
+  }
+
+  return null;
+}
+
+Future<List<Map<String, dynamic>>?> fetchAnotherUsersData(String username) async {
+  final url = Uri.parse('http://127.0.0.1:8081/api/return_user_recipes');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"}, // Set the content type
+      body: json.encode({"username": username}), // Encode the request body as JSON
+    );
+
+    print('Response Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      if (data.containsKey('recipes') && data['recipes'] != null) {
+        List<int> recipesIds = List<int>.from(data['recipes']);
+        List<Map<String, dynamic>> recipes = await fetchRecipesById(recipesIds);
+        return recipes;
+      } else {
+        throw Exception('Json is not correct');
+      }
+    } else {
+      throw Exception('Error with the response: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('API request error: $e');
+  }
+}
+
+
+
+
+
+
+
+
+
 
 
 

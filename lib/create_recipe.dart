@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:html' as html;
 import 'dart:typed_data';
 import 'package:my_app/Widgets/input_text_create.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'Classes/recipe.dart';
 import 'Service/recipe_service.dart';
 import 'Service/user_service.dart';
+import 'Widgets/message_complete.dart';
 
 class CreateActivityPage extends StatefulWidget {
 
@@ -19,6 +21,8 @@ class CreateActivityPage extends StatefulWidget {
 }
 
 class _CreateActivityPageState extends State<CreateActivityPage> {
+  final _formKey = GlobalKey<FormState>();
+
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _instructionsController = TextEditingController();
@@ -26,6 +30,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   final _categoryController = TextEditingController();
   Image? _selectedImage;
   String? _selectedImageBase64;
+  bool isSwitched = false;
 
   List<String> ingredients = [];
   List<String> instructions = [];
@@ -94,6 +99,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
 
   void _onSubmit(String? token) {
     if (_selectedImageBase64 != null) {
+      int public = isSwitched ? 1 : 0;
       createRecipe(
         _titleController.text,
         _descriptionController.text,
@@ -102,12 +108,22 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         _categoryController.text,
         _selectedImageBase64!,
         token!,
+        public,
       );
+      showOverlayNotification((context) {
+        return CompleteMessage(
+          message: 'Recipe created successfully',
+        );
+      });
     }
   }
 
   String? getToken() {
     return html.window.localStorage['token'];
+  }
+
+  void _validateAndSubmitData(){
+
   }
 
   @override
@@ -117,68 +133,130 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
       body: Container(
         color: Color(0xffefefef),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                          "Add a Recipe",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                                "Add a Recipe",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Text('Make this recipe public?'),
+                              Switch(
+                                  value: isSwitched,
+                                  onChanged: (value){
+                                      setState(() {
+                                        isSwitched=value;
+                                      });
+                                  }
+                              )
+                            ],
+                          )
+                        ],
                       ),
                     ),
-                  ),
-                  TextButton(
-                      onPressed: (){
-                        final token = getToken();
-                        if (token != null) {
-                          _onSubmit(token);
-                        }
-                        },
-                      child: Icon(Icons.add)
-                  )
-                ],
-              ),
-              Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex:1,
-                          child: CoolTextBar(
-                            Controller: _titleController,
-                            type: "Title",
-                            validator: (value){
-                              if(value!.isEmpty){
-                                return "Please Enter a title";
-                              }
-                            },
-                          )
-                        ),
-                        SizedBox(
-                          width: 50,
-                        ),
-                        Expanded(
-                        flex: 1,
+                    TextButton(
+                        onPressed: (){
+                          final token = getToken();
+                          if (token != null) {
+                            _onSubmit(token);
+                          }
+                          },
+                        child: Icon(Icons.add)
+                    )
+                  ],
+                ),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            flex:1,
                             child: CoolTextBar(
-                              Controller: _categoryController,
-                              type: "Category",
+                              Controller: _titleController,
+                              type: "Title",
                               validator: (value){
-
+                                if(value!.isEmpty){
+                                  return "Please Enter a title";
+                                }
                               },
                             )
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 50,),
+                          ),
+                          SizedBox(
+                            width: 50,
+                          ),
+                          Expanded(
+                          flex: 1,
+                              child: CoolTextBar(
+                                Controller: _categoryController,
+                                type: "Category",
+                                validator: (value){
+                                },
+                              )
+                          ),
+
+                        ],
+                      ),
+                      SizedBox(height: 50,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 360,
+                                  width: 640,
+                                  color: Color(0xffefefef),
+                                  child: _selectedImage != null
+                                      ? _selectedImage
+                                      : Placeholder(),
+                                ),
+                                TextButton(
+                                    onPressed: () async {
+                                      final imageString = await selectAndConvertImage();
+                                      if (imageString != null) {
+                                        _updateSelectedImage(imageString);
+                                      }
+                                    },
+                                    child: Text("Add Image")
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 50,
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: CoolTextBar(
+                              Controller: _descriptionController,
+                              type: "Description",
+                              validator: (value){
+                                if(value!.length < 60){
+                                  return "Must be at least 60 characters!";
+                                }
+                              },
+                            )
+                          ),
+                        ],
+                      ),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           flex: 1,
@@ -211,97 +289,57 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                                     );
                                   }).toList(),
                                 ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              CoolTextBar(
+                                Controller: _instructionsController,
+                                type: "Instructions",
+                                validator: (value){
+
+                                },
+                              ),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: TextButton(
+                                  onPressed: () {
+                                    _updateInstructions(_instructionsController.text);
+                                  },
+                                  child: Text("Submit instruction"),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: instructions.map((instructions) {
+                                    return Text(
+                                      "- $instructions",
+                                      style: TextStyle(fontSize: 18),
+                                    );
+                                  }).toList(),
+                                ),
                               )
                             ],
                           ),
                         ),
-                        SizedBox(
-                          width: 50,
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: CoolTextBar(
-                            Controller: _descriptionController,
-                            type: "Description",
-                            validator: (value){
-                              if(value!.length < 60){
-                                return "Must be at least 60 characters!";
-                              }
-                            },
-                          )
-                        ),
-                      ],
+                        ],
                     ),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 360,
-                              width: 640,
-                              color: Color(0xffefefef),
-                              child: _selectedImage != null
-                                  ? _selectedImage
-                                  : Placeholder(),
-                            ),
-                            TextButton(
-                                onPressed: () async {
-                                  final imageString = await selectAndConvertImage();
-                                  if (imageString != null) {
-                                    _updateSelectedImage(imageString);
-                                  }
-                                },
-                                child: Text("Add Image")
-                            )
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            CoolTextBar(
-                              Controller: _instructionsController,
-                              type: "Instructions",
-                              validator: (value){
-
-                              },
-                            ),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: TextButton(
-                                onPressed: () {
-                                  _updateInstructions(_instructionsController.text);
-                                },
-                                child: Text("Submit instruction"),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: instructions.map((instructions) {
-                                  return Text(
-                                    "- $instructions",
-                                    style: TextStyle(fontSize: 18),
-                                  );
-                                }).toList(),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      ],
+                    ],
                   ),
-                  ],
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+

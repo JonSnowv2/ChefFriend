@@ -36,7 +36,7 @@ Future<void> deleteRecipe(int recipeId) async {
   }
 }
 
-Future<void> createRecipe(String title, String description, List<String> ingredients, List<String> instructions, String category, String image, String token) async {
+Future<void> createRecipe(String title, String description, List<String> ingredients, List<String> instructions, String category, String image, String token, int public) async {
   const url = 'http://127.0.0.1:8081/api/recipes/add';
 
   try {
@@ -53,6 +53,7 @@ Future<void> createRecipe(String title, String description, List<String> ingredi
         'instructions': instructions,
         'category': category,
         'image': image,
+        'public': public,
       }),
     );
 
@@ -63,6 +64,49 @@ Future<void> createRecipe(String title, String description, List<String> ingredi
     }
   } catch (error) {
     print('Error creating recipe: $error');
+  }
+}
+
+Future<List<Map<String, dynamic>>> fetchPublicRecipes(String token) async {
+  String url = 'http://192.168.1.213:8081/api/get_public_recipes';
+
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    List<dynamic> data = json.decode(response.body);
+    List<Map<String, dynamic>> recipes = data.cast<Map<String, dynamic>>();
+    return recipes;
+  } else {
+    throw Exception("Failed to load recipes");
+  }
+}
+
+Future<List<Map<String, dynamic>>> fetchRecipesById(List<int> ids) async{
+  final url = Uri.parse('http://127.0.0.1:8081/api/get_recipes_by_id');
+
+  try{
+    final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({"ids": ids}),
+    );
+
+    if (response.statusCode == 200){
+      final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(json.decode(response.body));
+
+      return data;
+    }
+    else{
+      throw Exception('Something went wrong!');
+    }
+  }
+  catch (e){
+    throw Exception('User not found $e');
   }
 }
 

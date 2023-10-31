@@ -28,7 +28,7 @@ class RegisterPage extends StatelessWidget {
       if(userExists){
         showOverlayNotification((context) {
           return CompleteMessage(
-            message: 'Username already exists',
+            message: 'Username Already Exists',
           );
         });
       }
@@ -58,7 +58,7 @@ class RegisterPage extends StatelessWidget {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          image: DecorationImage(image: ExactAssetImage('assets/background.jpg',), fit: BoxFit.cover),
+          image: DecorationImage(image: ExactAssetImage('assets/background4.jpg',), fit: BoxFit.cover),
         ),
         child: Form(
           key: _formKey,

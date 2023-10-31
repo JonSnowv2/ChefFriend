@@ -7,10 +7,31 @@ import 'Classes/user.dart';
 import 'Service/user_service.dart';
 import 'dart:html' as html;
 
-void main() => runApp(OverlaySupport(
-  child:   MaterialApp(
-  
-    home: RegisterPage(),
-  
-  ),
-));
+
+String? getToken() {
+  return html.window.localStorage['token'];
+}
+
+void main() async {
+  String? token = getToken();
+  User? user;
+
+  if (token != null){
+    user = await fetchUserData(token);
+    print('yes');
+  }
+
+  if(user != null){
+    print(user.username);
+  }
+  else{
+    print('IT IS NULL');
+  }
+
+
+  runApp(OverlaySupport(
+    child: MaterialApp(
+      home: token == null ? RegisterPage() : HomePage(user: user)
+    )
+  ));
+}

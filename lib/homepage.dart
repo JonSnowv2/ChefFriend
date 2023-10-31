@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_app/Service/recipe_service.dart';
 import 'package:my_app/create_recipe.dart';
+import 'package:my_app/public_recies_page.dart';
 import 'Classes/recipe.dart';
 import 'Classes/user.dart';
 import 'Service/user_service.dart';
@@ -100,7 +101,9 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     child: CreateActivityPage(),
                   ),
-                  Container(child: Text('3rd tab')),
+                  Container(
+                    child: PublicRecipePage(),
+                  ),
                 ],
               ),
             ),

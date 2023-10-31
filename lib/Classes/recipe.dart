@@ -15,6 +15,7 @@ class Recipe {
   String _category = '';
   String _image = '';
   String _user_username = '';
+  int _public = 0;
 
   Recipe({
     required id,
@@ -24,7 +25,8 @@ class Recipe {
     required ingredients,
     required category,
     required image,
-    required user_username
+    required user_username,
+    required public
   }):
       _id = id,
       _title = title,
@@ -33,7 +35,8 @@ class Recipe {
       _ingredients = ingredients,
       _category = category,
       _image = image,
-      _user_username = user_username;
+      _user_username = user_username,
+      _public = public;
 
   String get user_username => _user_username;
 
@@ -53,10 +56,17 @@ class Recipe {
       category: json["category"],
       image: json["image"],
       ingredients: ingredientsList,
-      user_username: json['user_username']
+      user_username: json['user_username'],
+      public: json['public']
     );
   }
 
+
+  int get public => _public;
+
+  set public(int value) {
+    _public = value;
+  }
 
   int get id => _id;
 
