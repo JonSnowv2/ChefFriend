@@ -36,7 +36,7 @@ Future<void> deleteRecipe(int recipeId) async {
   }
 }
 
-Future<void> createRecipe(String title, String description, List<String> ingredients, List<String> instructions, String category, String image, String token, int public) async {
+Future<void> createRecipe(String title, String description, List<String> ingredients, List<String> instructions, String category, String? image, String token, int public, int timeTaken) async {
   const url = 'http://127.0.0.1:8081/api/recipes/add';
 
   try {
@@ -54,6 +54,7 @@ Future<void> createRecipe(String title, String description, List<String> ingredi
         'category': category,
         'image': image,
         'public': public,
+        'time_taken': timeTaken,
       }),
     );
 

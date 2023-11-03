@@ -1,23 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CoolTextBar extends StatefulWidget {
+class CoolTextBarv2 extends StatefulWidget {
   TextEditingController Controller;
   String type;
   final FormFieldValidator<String>? validator;
 
-  CoolTextBar({super.key, required this.Controller, required this.type, required this.validator});
+  CoolTextBarv2({super.key, required this.Controller, required this.type, required this.validator});
 
   @override
-  State<CoolTextBar> createState() => _CoolTextBarState();
+  State<CoolTextBarv2> createState() => _CoolTextBarStatev2();
 }
 
-class _CoolTextBarState extends State<CoolTextBar> {
+class _CoolTextBarStatev2 extends State<CoolTextBarv2> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       style: TextStyle(fontSize: 20),
+      maxLines: double.maxFinite.floor(),
       decoration: InputDecoration(
+          alignLabelWithHint: true,
           labelText: widget.type,
           labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
           hintText: '...',

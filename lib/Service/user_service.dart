@@ -152,6 +152,27 @@ Future<List<Map<String, dynamic>>?> fetchAnotherUsersData(String username) async
   }
 }
 
+Future<void> addToFavorites(int recipeId, String username) async{
+  final url = Uri.parse('http://127.0.0.1:8081/api/add_to_favorites');
+
+  final response = await http.post(
+    url,
+    headers: {"Content-Type": "application/json"},
+    body: json.encode({'username': username, 'recipeId': recipeId})
+  );
+
+  if (response.statusCode == 200){
+    print('Recipe added to Favorites');
+  }
+  else{
+    print('Process failed');
+  }
+}
+
+Future<void> getFavorites(String username) async{
+
+}
+
 
 
 

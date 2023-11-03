@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/Service/recipe_service.dart';
+import 'package:my_app/Service/user_service.dart';
 import 'package:my_app/Styles/Colors.dart';
 import 'package:my_app/Styles/Gradients.dart';
 import 'package:my_app/Styles/Shadows.dart';
 import 'package:flutter_glow/flutter_glow.dart';
-import 'package:my_app/Widgets/users_recipes_page.dart';
+import 'package:my_app/users_recipes_page.dart';
+import 'dart:html' as html;
 
 import '../Classes/recipe.dart';
+import '../Classes/user.dart';
 
 class ContainerRecipeV2Public extends StatefulWidget {
   final Recipe recipe;
   final String? imageUrl;
-
 
   ContainerRecipeV2Public({super.key, required this.recipe, required this.imageUrl});
 
@@ -21,6 +23,12 @@ class ContainerRecipeV2Public extends StatefulWidget {
 }
 
 class _ContainerRecipeV2StatePublic extends State<ContainerRecipeV2Public> {
+  bool clicked = false;
+
+  String? getToken() {
+    return html.window.localStorage['token'];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -87,23 +95,30 @@ class _ContainerRecipeV2StatePublic extends State<ContainerRecipeV2Public> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: widget.recipe.ingredients.map((item){
-                              return Text(
-                                '• $item',
-                                style: TextStyle(fontSize: 18),
-                              );
-                            }).toList(),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: widget.recipe.ingredients.map((item){
+                                return Text(
+                                  '• $item',
+                                  softWrap: true,
+                                  style: TextStyle(fontSize: 18),
+                                );
+                              }).toList(),
+                            ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: widget.recipe.instructions.map((item){
-                              return Text(
-                                '• $item',
-                                style: TextStyle(fontSize: 18),
-                              );
-                            }).toList(),
+                          SizedBox(width: 10,),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: widget.recipe.instructions.map((item){
+                                return Text(
+                                  '• $item',
+                                  softWrap: true,
+                                  style: TextStyle(fontSize: 18),
+                                );
+                              }).toList(),
+                            ),
                           )
                         ],
                       ),
@@ -111,13 +126,42 @@ class _ContainerRecipeV2StatePublic extends State<ContainerRecipeV2Public> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Created by: ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                        TextButton(onPressed: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => UsersRecipesPage(username: widget.recipe.user_username)));
-                        },
-                          child: Text(widget.recipe.user_username, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Persian_Orange)),)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(widget.recipe.category, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                            Text('Time taken: ${widget.recipe.timeTaken.toString()} min', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Text('Created by: ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                                TextButton(onPressed: (){
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => UsersRecipesPage(username: widget.recipe.user_username)));
+                                },
+                                  child: Text(widget.recipe.user_username, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Persian_Orange)),)
+                              ],
+                            ),
+                            IconButton(
+                                onPressed: () async{
+                                  setState(() {
+                                    clicked = !clicked;
+                                  });
+                                  final token = getToken();
+                                  final User? user = await fetchUserData(token!);
+                                  addToFavorites(widget.recipe.id, user!.username);
+                                },
+                                icon: clicked == false ? Icon(Icons.favorite_border) : Icon(Icons.favorite)
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   )

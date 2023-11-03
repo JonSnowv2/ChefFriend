@@ -12,12 +12,12 @@ class CompleteMessage extends StatelessWidget {
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        color: Blue,
+        color: Color(0xffffffff),
       ),
       child: Text(
         message,
         style: TextStyle(
-          color: Persian_Orange,
+          color: Blue,
           fontSize: 18.0,
         ),
       ),

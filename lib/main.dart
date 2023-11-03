@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/Styles/Colors.dart';
 import 'package:my_app/register_page.dart';
 import 'package:my_app/log_in_page.dart';
 import 'package:my_app/homepage.dart';
@@ -31,6 +32,7 @@ void main() async {
 
   runApp(OverlaySupport(
     child: MaterialApp(
+        theme: new ThemeData(scaffoldBackgroundColor: White_Anti_Flash),
       home: token == null ? RegisterPage() : HomePage(user: user)
     )
   ));

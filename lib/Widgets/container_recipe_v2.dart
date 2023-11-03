@@ -64,7 +64,7 @@ class _ContainerRecipeV2State extends State<ContainerRecipeV2> {
                     borderRadius: BorderRadius.circular(12),
                     child: widget.imageUrl != null
                         ? Image.network(widget.imageUrl!)
-                        : Container(),
+                        : Container(child: Text("Chef'sFriend"),),
                   ),
                 ),
                 SizedBox(
@@ -86,24 +86,34 @@ class _ContainerRecipeV2State extends State<ContainerRecipeV2> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: widget.recipe.ingredients.map((item){
-                            return Text(
-                              '• $item',
-                              style: TextStyle(fontSize: 18),
-                            );
-                          }).toList(),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: widget.recipe.ingredients.map((item){
+                              return Text(
+                                '• $item',
+                                softWrap: true,
+                                style: TextStyle(fontSize: 18),
+                              );
+                            }).toList(),
+                          ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: widget.recipe.instructions.map((item){
-                            return Text(
-                              '• $item',
-                              style: TextStyle(fontSize: 18),
-                            );
-                          }).toList(),
+                        SizedBox(width: 10,),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: widget.recipe.instructions.map((item){
+                              return Text(
+                                '• $item',
+                                softWrap: true,
+                                style: TextStyle(fontSize: 18),
+                              );
+                            }).toList(),
+                          ),
                         )
                       ],
                     ),
