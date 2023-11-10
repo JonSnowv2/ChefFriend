@@ -4,8 +4,10 @@ import 'package:my_app/Service/recipe_service.dart';
 import 'package:my_app/Widgets/container_recipe_v2_noremove.dart';
 import 'dart:html' as html;
 import 'Classes/recipe.dart';
+import 'Classes/user.dart';
 
 class PublicRecipePage extends StatefulWidget {
+
   PublicRecipePage({super.key});
 
   @override

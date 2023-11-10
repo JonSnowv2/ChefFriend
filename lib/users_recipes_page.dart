@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:my_app/Service/user_service.dart';
 
 import 'Classes/recipe.dart';
+import 'Classes/user.dart';
 import 'Styles/Colors.dart';
 import 'Widgets/container_recipe_v2_noremove.dart';
 
 class UsersRecipesPage extends StatefulWidget {
   final String username;
 
-  const UsersRecipesPage({super.key, required this.username,});
+  const UsersRecipesPage({super.key, required this.username});
 
   @override
   State<UsersRecipesPage> createState() => _UsersRecipesPageState();

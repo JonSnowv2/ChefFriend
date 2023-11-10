@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_app/Service/recipe_service.dart';
 import 'package:my_app/create_recipe.dart';
+import 'package:my_app/favorites_page.dart';
 import 'package:my_app/public_recies_page.dart';
 import 'Classes/recipe.dart';
 import 'Classes/user.dart';
@@ -66,7 +67,7 @@ class _HomePageState extends State<HomePage> {
         child: CircularProgressIndicator(),
       );
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         body: Column(
           children: [
@@ -82,6 +83,7 @@ class _HomePageState extends State<HomePage> {
                       Tab(icon: Icon(Icons.person), text: "Profile Page"),
                       Tab(icon: Icon(Icons.add), text: "Add Recipe"),
                       Tab(icon: Icon(Icons.home), text: "Recipes"),
+                      Tab(icon: Icon(Icons.favorite), text: "Favorites"),
                     ],
                   ),
                   IconButton(onPressed: ()
@@ -103,6 +105,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     child: PublicRecipePage(),
+                  ),
+                  Container(
+                    child: FavoritesPage(user: widget.user!),
                   ),
                 ],
               ),

@@ -9,19 +9,25 @@ List<User> userFromJson(String str){
 class User{
   String _username = '';
   String _name = '';
-  String _password = '';
   List<dynamic> _recipes = [];
+  List<dynamic> _favoriteRecipes = [];
 
   User({
     required username,
-    required password,
     required recipes,
-    required name
+    required name,
+    required favoriteRecipes
   }):
       _username = username,
-      _password = password,
       _recipes = recipes,
-      _name = name;
+      _name = name,
+      _favoriteRecipes = favoriteRecipes;
+
+  List<dynamic> get favoriteRecipes => _favoriteRecipes;
+
+  set favoriteRecipes(List<dynamic> value) {
+    _favoriteRecipes = value;
+  }
 
   factory User.fromJson(Map<String, dynamic> json){
 
@@ -32,11 +38,18 @@ class User{
       recipes = recipesData.cast<int>();
     }
 
-    return User(
+    final favoriteRecipeIdsData = json['favorites_list'];
+    List<int> favoriteRecipeIds = [];
+
+    if (favoriteRecipeIdsData is List) {
+      favoriteRecipeIds = favoriteRecipeIdsData.cast<int>();
+    }
+
+      return User(
       username: json['username'] ?? '',
       name: json['name'] ?? '',
-      password: json['password'] ?? '',
       recipes: recipes,
+      favoriteRecipes: favoriteRecipeIds
     );
   }
 
@@ -48,12 +61,6 @@ class User{
 
   List<int> get recipesAsInt {
     return _recipes.map((recipe) => recipe as int).toList();
-  }
-
-  String get password => _password;
-
-  set password(String value) {
-    _password = value;
   }
 
   String get name => _name;

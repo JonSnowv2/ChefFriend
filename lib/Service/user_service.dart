@@ -152,13 +152,13 @@ Future<List<Map<String, dynamic>>?> fetchAnotherUsersData(String username) async
   }
 }
 
-Future<void> addToFavorites(int recipeId, String username) async{
+Future<void> addToFavorites(int recipeId, String token) async{
   final url = Uri.parse('http://127.0.0.1:8081/api/add_to_favorites');
 
   final response = await http.post(
     url,
     headers: {"Content-Type": "application/json"},
-    body: json.encode({'username': username, 'recipeId': recipeId})
+    body: json.encode({'token': token, 'recipeId': recipeId})
   );
 
   if (response.statusCode == 200){
@@ -169,8 +169,42 @@ Future<void> addToFavorites(int recipeId, String username) async{
   }
 }
 
-Future<void> getFavorites(String username) async{
+Future<void> removeFromFavorites(int recipeId, String token) async{
+  final url = Uri.parse('http://127.0.0.1:8081/api/remove_from_favorites');
 
+  final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({'token': token, 'recipeId': recipeId})
+  );
+
+  if (response.statusCode == 200){
+    print('Recipe removed from Favorites');
+  }
+  else{
+    print('Process failed');
+  }
+}
+
+Future<List<dynamic>?> fetchFavoriteRecipes(String token) async{
+  final url = Uri.parse('http://127.0.0.1:8081/api/return_user_fav_recipes');
+
+  final response = await http.post(
+    url,
+    headers: {"Content-Type": "application/json"},
+    body: json.encode({'token': token})
+  );
+
+  if (response.statusCode == 200){
+    final Map<String, dynamic> data = json.decode(response.body);
+
+    if (data.containsKey('favorite recipes')  && data['favorite recipes'] != null){
+      final List<dynamic> recipesList = data['favorite recipes'];
+      return recipesList;
+    }
+    return null;
+  }
+  return null;
 }
 
 

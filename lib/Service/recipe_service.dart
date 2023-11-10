@@ -107,7 +107,7 @@ Future<List<Map<String, dynamic>>> fetchRecipesById(List<int> ids) async{
     }
   }
   catch (e){
-    throw Exception('User not found $e');
+    throw Exception('Failed $e');
   }
 }
 

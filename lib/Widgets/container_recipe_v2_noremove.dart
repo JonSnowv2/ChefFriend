@@ -24,14 +24,32 @@ class ContainerRecipeV2Public extends StatefulWidget {
 
 class _ContainerRecipeV2StatePublic extends State<ContainerRecipeV2Public> {
   bool clicked = false;
+  bool isLoaded = false;
+  User? user;
 
   String? getToken() {
     return html.window.localStorage['token'];
   }
 
+  getData() async{
+    final token = getToken();
+    User? user2 = await fetchUserData(token!);
+
+    setState(() {
+      user = user2;
+      clicked = user!.favoriteRecipes.contains(widget.recipe.id);
+    });
+  }
+
+  void initState(){
+    super.initState();
+    getData();
+    isLoaded = true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return isLoaded ? Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -152,11 +170,16 @@ class _ContainerRecipeV2StatePublic extends State<ContainerRecipeV2Public> {
                             IconButton(
                                 onPressed: () async{
                                   setState(() {
-                                    clicked = !clicked;
+                                    final token = getToken();
+                                    if (clicked == false){
+                                      addToFavorites(widget.recipe.id, token!);
+                                      clicked = true;
+                                    }
+                                    else{
+                                      removeFromFavorites(widget.recipe.id, token!);
+                                      clicked = false;
+                                    }
                                   });
-                                  final token = getToken();
-                                  final User? user = await fetchUserData(token!);
-                                  addToFavorites(widget.recipe.id, user!.username);
                                 },
                                 icon: clicked == false ? Icon(Icons.favorite_border) : Icon(Icons.favorite)
                             ),
@@ -170,6 +193,6 @@ class _ContainerRecipeV2StatePublic extends State<ContainerRecipeV2Public> {
           ),
         ),
       ),
-    );
+    ): Center(child: CircularProgressIndicator(),);
   }
 }
