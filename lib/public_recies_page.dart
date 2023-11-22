@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_app/Service/recipe_service.dart';
+import 'package:my_app/Styles/Colors.dart';
 import 'package:my_app/Widgets/container_recipe_v2_noremove.dart';
 import 'dart:html' as html;
 import 'Classes/recipe.dart';
@@ -20,6 +21,47 @@ class _PublicRecipePageState extends State<PublicRecipePage> {
   TextEditingController _searchControllerTitle = TextEditingController();
   TextEditingController _searchControllerUsername = TextEditingController();
   List<Recipe> recipeCopy = [];
+
+  String? _selectedCategory = 'All Categories';
+
+  List<DropdownMenuItem<String>> categories = [
+    DropdownMenuItem<String>(child: Text('All Categories'), value: 'All Categories'),
+    DropdownMenuItem<String>(child: Text('Main Course'), value: 'Main Course'),
+    DropdownMenuItem<String>(child: Text('Breakfast'), value: 'Breakfast'),
+    DropdownMenuItem<String>(child: Text('Appetizer'), value: 'Appetizer'),
+    DropdownMenuItem<String>(child: Text('Snack'), value: 'Snack'),
+    DropdownMenuItem<String>(child: Text('Salad'), value: 'Salad'),
+    DropdownMenuItem<String>(child: Text('Soup'), value: 'Soup'),
+    DropdownMenuItem<String>(child: Text('Dessert'), value: 'Dessert'),
+  ];
+
+
+  String _selectedTimeTaken = 'Any Time Taken';
+
+  List<DropdownMenuItem<String>> timeTakenOptions = [
+    DropdownMenuItem<String>(child: Text('Any Time Taken'), value: 'Any Time Taken'),
+    DropdownMenuItem<String>(child: Text('5-10 minutes'), value: '5-10 minutes'),
+    DropdownMenuItem<String>(child: Text('10-20 minutes'), value: '10-20 minutes'),
+    DropdownMenuItem<String>(child: Text('20-30 minutes'), value: '20-30 minutes'),
+    DropdownMenuItem<String>(child: Text('30-60 minutes'), value: '30-60 minutes'),
+    DropdownMenuItem<String>(child: Text('60+ minutes'), value: '60+ minutes'),
+  ];
+
+  void _updateSelectedCategory(String? newCategory) {
+    if (newCategory != null) {
+      setState(() {
+        _selectedCategory = newCategory;
+      });
+    }
+  }
+
+  void _updateSelectedTimeTaken(String? newTimeTakenValue) {
+    if (newTimeTakenValue != null) {
+      setState(() {
+        _selectedTimeTaken = newTimeTakenValue;
+      });
+    }
+  }
 
   String? getToken() {
     return html.window.localStorage['token'];
@@ -46,7 +88,27 @@ class _PublicRecipePageState extends State<PublicRecipePage> {
     setState(() {
       List<Recipe> filteredByTitle = recipes.where((recipe) => recipe.title.toLowerCase().contains(_searchControllerTitle.text.toLowerCase())).toList();
       List<Recipe> filteredByUsername = filteredByTitle.where((recipe) => recipe.user_username.toLowerCase().contains(_searchControllerUsername.text.toLowerCase())).toList();
-      recipeCopy = filteredByUsername;
+      List<Recipe> filteredByCategory = _selectedCategory != 'All Categories' ? filteredByUsername.where((recipe) => recipe.category == _selectedCategory).toList() : filteredByUsername;
+      List<Recipe> filteredByTimeTaken = filteredByCategory;
+      if (_selectedTimeTaken != 'Any Time Taken'){
+        if(_selectedTimeTaken != '60+ minutes') {
+          String firstBoundry = _selectedTimeTaken[1] != '-'
+              ? _selectedTimeTaken[0] + _selectedTimeTaken[1]
+              : _selectedTimeTaken[0];
+          String secondBoundry = _selectedTimeTaken[1] != '-'
+              ? _selectedTimeTaken[3] + _selectedTimeTaken[4]
+              : _selectedTimeTaken[2] + _selectedTimeTaken[3];
+          int firstBoundryInt = int.parse(firstBoundry);
+          int secondBoundryInt = int.parse(secondBoundry);
+
+          filteredByTimeTaken = filteredByCategory.where((recipe) => recipe.timeTaken >= firstBoundryInt && recipe.timeTaken <= secondBoundryInt).toList();
+        }
+        else{
+          filteredByTimeTaken = filteredByCategory.where((recipe) => recipe.timeTaken >= 60).toList();
+        }
+
+      }
+      recipeCopy = filteredByTimeTaken;
     });
   }
 
@@ -64,54 +126,68 @@ class _PublicRecipePageState extends State<PublicRecipePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 400,
-                              child: TextFormField(
-                                controller: _searchControllerTitle,
-                                decoration: InputDecoration(
-                                    hintText: 'Search by recipe title...'
-                                ),
-                              ),
+                        Container(
+                          width: 400,
+                          child: TextFormField(
+                            controller: _searchControllerTitle,
+                            decoration: InputDecoration(
+                                hintText: 'Search by recipe title...'
                             ),
-                            IconButton(
-                                onPressed: (){
-                                  _searchBySearch();
-                                },
-                                icon: Icon(Icons.search)
-                            )
-                          ],
+                          ),
                         ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 400,
-                              child: TextFormField(
-                                controller: _searchControllerUsername,
-                                decoration: InputDecoration(
-                                    hintText: 'Search by username...'
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: (){
-                                  _searchBySearch();
-                                },
-                                icon: Icon(Icons.search)
-                            )
-                          ],
-                        ),
+                        IconButton(
+                            onPressed: (){
+                              _searchBySearch();
+                            },
+                            icon: Icon(Icons.search)
+                        )
                       ],
                     ),
                     Row(
                       children: [
-                        TextButton(onPressed: () {}, child: Text('category', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),)),
-                        TextButton(
-                            onPressed: () {}, child: Text('number of ingredients', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),)),
-                        TextButton(onPressed: () {}, child: Text('time taken', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),)),
+                        Container(
+                          width: 400,
+                          child: TextFormField(
+                            controller: _searchControllerUsername,
+                            decoration: InputDecoration(
+                                hintText: 'Search by username...'
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                            onPressed: (){
+                              _searchBySearch();
+                            },
+                            icon: Icon(Icons.search)
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        DropdownButton<String>(
+                          items: categories,
+                          value: _selectedCategory,
+                          onChanged: (String? newValue) {
+                            _updateSelectedCategory(newValue);
+                            _searchBySearch();
+                          },
+                          iconSize: 42,
+                          iconEnabledColor: Persian_Orange,
+                        ),
+                        SizedBox(width: 50,),
+                        DropdownButton<String>(
+                          items: timeTakenOptions,
+                          value: _selectedTimeTaken,
+                          onChanged: (String? newValue) {
+                            _updateSelectedTimeTaken(newValue);
+                            _searchBySearch();
+                          },
+                          iconSize: 42,
+                          iconEnabledColor: Persian_Orange,
+                        ),
                       ],
                     ),
                   ],

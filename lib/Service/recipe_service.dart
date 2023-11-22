@@ -68,6 +68,34 @@ Future<void> createRecipe(String title, String description, List<String> ingredi
   }
 }
 
+Future<void> editRecipe(int id, String title, String description, List<String> ingredients, List<String> instructions, String category, String token, int public, int timeTaken) async{
+  const url = 'http://127.0.0.1:8081/api/edit_recipe';
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: json.encode({
+      'id': id,
+      'new_title': title,
+      'new_description': description,
+      'new_ingredients': ingredients,
+      'new_instructions': instructions,
+      'new_category': category,
+      'new_public': public,
+      'new_time_taken': timeTaken,
+    }),
+  );
+
+  if (response.statusCode == 200){
+    print('Successful!');
+  }
+  else{
+    print('Failure');
+  }
+}
+
 Future<List<Map<String, dynamic>>> fetchPublicRecipes(String token) async {
   String url = 'http://192.168.1.213:8081/api/get_public_recipes';
 

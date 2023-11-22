@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'Classes/recipe.dart';
 import 'Service/recipe_service.dart';
 import 'Service/user_service.dart';
+import 'Styles/Colors.dart';
 import 'Widgets/input_text_create_v2expanded.dart';
 import 'Widgets/message_complete.dart';
 
@@ -28,7 +29,6 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   final _descriptionController = TextEditingController();
   final _instructionsController = TextEditingController();
   final _ingredientsController = TextEditingController();
-  final _categoryController = TextEditingController();
   final _timeTakenController = TextEditingController();
   Image? _selectedImage;
   String? _selectedImageBase64;
@@ -108,7 +108,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         _descriptionController.text,
         ingredients,
         instructions,
-        _categoryController.text,
+        _selectedCategory!,
         _selectedImageBase64! != null ? _selectedImageBase64 : chefFriend,
         token!,
         public,
@@ -126,8 +126,24 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
     return html.window.localStorage['token'];
   }
 
-  void _validateAndSubmitData(){
+  String? _selectedCategory = 'Main Course';
 
+  List<DropdownMenuItem<String>> categories = [
+    DropdownMenuItem<String>(child: Text('Main Course'), value: 'Main Course'),
+    DropdownMenuItem<String>(child: Text('Breakfast'), value: 'Breakfast'),
+    DropdownMenuItem<String>(child: Text('Appetizer'), value: 'Appetizer'),
+    DropdownMenuItem<String>(child: Text('Snack'), value: 'Snack'),
+    DropdownMenuItem<String>(child: Text('Salad'), value: 'Salad'),
+    DropdownMenuItem<String>(child: Text('Soup'), value: 'Soup'),
+    DropdownMenuItem<String>(child: Text('Dessert'), value: 'Dessert'),
+  ];
+
+  void _updateSelectedCategory(String? newCategory) {
+    if (newCategory != null) {
+      setState(() {
+        _selectedCategory = newCategory;
+      });
+    }
   }
 
   @override
@@ -199,20 +215,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                         ),
                         SizedBox(
                           width: 50,
-                        ),
-                        Expanded(
-                        flex: 1,
-                            child: CoolTextBar(
-                              Controller: _categoryController,
-                              type: "Category",
-                              validator: (value){
-                              },
-                            )
-                        ),
-                        SizedBox(
-                          width: 25,
-                        ),
-                        Expanded(
+                        ),Expanded(
                             flex: 1,
                             child: CoolTextBar(
                               Controller: _timeTakenController,
@@ -229,6 +232,21 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                                 }
                               },
                             )
+                        ),
+                        SizedBox(
+                          width: 25,
+                        ),
+                        Expanded(
+                        flex: 1,
+                            child: DropdownButton<String>(
+                              items: categories,
+                              value: _selectedCategory,
+                              onChanged: (String? newValue) {
+                                _updateSelectedCategory(newValue);
+                              },
+                              iconSize: 42,
+                              iconEnabledColor: Persian_Orange,
+                            ),
                         ),
                       ],
                     ),
