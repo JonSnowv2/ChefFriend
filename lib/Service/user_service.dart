@@ -91,6 +91,25 @@ Future<User?> loginUser(String username, String password) async {
   return null;
 }
 
+Future<void> logoutUser(String token) async{
+  final url = Uri.parse('http://127.0.0.1:8081/logout');
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({'token': token})
+  );
+
+  if (response.statusCode == 200){
+    print('Logout successfull');
+  }
+  else{
+    print('Somethingn went wrong');
+  }
+}
+
 Future<User?> fetchUserData(String token) async {
   final url = Uri.parse('http://127.0.0.1:8081/api/return_user');
   print(token);

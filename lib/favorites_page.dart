@@ -11,9 +11,8 @@ import 'Widgets/container_recipe_v2_noremove.dart';
 import 'dart:html' as html;
 
 class FavoritesPage extends StatefulWidget {
-  final User? user;
 
-  const FavoritesPage({super.key, required this.user});
+  const FavoritesPage({super.key});
 
   @override
   State<FavoritesPage> createState() => _FavoritesPageState();
@@ -22,6 +21,7 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPageState extends State<FavoritesPage> {
   List<Recipe> recipes = [];
   bool isLoaded = false;
+  User? user;
 
   String? getToken() {
     return html.window.localStorage['token'];
@@ -37,9 +37,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
     });
   }
 
+  void fetchAndSetUser() async{
+    String? token = getToken();
+
+    user = await fetchUserData(token!);
+  }
+
   @override
   void initState(){
     super.initState();
+    fetchAndSetUser();
     getRecipes();
     print(recipes);
     isLoaded = true;

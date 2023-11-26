@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_app/Service/user_service.dart';
 import 'package:my_app/Styles/Colors.dart';
 import 'package:my_app/Styles/Gradients.dart';
 import 'package:my_app/Styles/Shadows.dart';
 import 'package:my_app/Widgets/message_complete.dart';
 import 'package:my_app/log_in_page.dart';
+import 'Service/router.dart';
 import 'Service/user_service.dart';
 import 'Widgets/input_text_create.dart';
 import 'Widgets/input_text_password.dart';
@@ -151,7 +153,7 @@ class RegisterPage extends StatelessWidget {
                   Text('already have an account?', style: TextStyle(color: Colors.blue),),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => LogInPage()));
+                      context.goNamed(MyAppRouteConstants.loginRouteName);
                     },
                       child: Text("Log In", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
                   )

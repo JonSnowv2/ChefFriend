@@ -1,19 +1,23 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_app/Service/recipe_service.dart';
+import 'package:my_app/Styles/Colors.dart';
 import 'package:my_app/create_recipe.dart';
 import 'package:my_app/favorites_page.dart';
 import 'package:my_app/public_recies_page.dart';
+import 'package:my_app/unknown_page.dart';
+import 'package:my_app/welcome_page.dart';
 import 'Classes/recipe.dart';
 import 'Classes/user.dart';
 import 'Service/user_service.dart';
 import 'profile_page.dart';
 import 'dart:html' as html;
+import 'Service/router.dart';
 
 class HomePage extends StatefulWidget {
-  final User? user;
 
-  HomePage({Key? key, required this.user}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -22,50 +26,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Recipe> recipes = [];
   bool dataFetched = false;
+  User? user;
 
   String? getToken() {
     return html.window.localStorage['token'];
   }
 
   @override
-  void initState() {
-    super.initState();
-    fetchAndSetRecipes();
-  }
-
-  Future<void> fetchAndSetRecipes() async {
-    try {
-      String? token = getToken();
-      if (token != null) {
-        List<Map<String, dynamic>> fetchedRecipeData = await fetchRecipeData(token);
-
-        List<Recipe> fetchedRecipes = [];
-        for (Map<String, dynamic> recipeMap in fetchedRecipeData) {
-          Recipe recipe = Recipe.fromJson(recipeMap);
-          fetchedRecipes.add(recipe);
-        }
-        setState(() {
-          recipes = fetchedRecipes;
-          dataFetched = true;
-        });
-      } else {
-        print('Token is missing. Please log in.');
-      }
-    } catch (e) {
-      print('Error fetching recipes: $e');
-    }
-  }
-
-  Future<void> refreshRecipes() async {
-    await fetchAndSetRecipes();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (!dataFetched)
-      return Center(
-        child: CircularProgressIndicator(),
-      );
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -86,11 +54,13 @@ class _HomePageState extends State<HomePage> {
                       Tab(icon: Icon(Icons.favorite), text: "Favorites"),
                     ],
                   ),
-                  IconButton(onPressed: ()
-                  {
-                    refreshRecipes();
-                  },
-                      icon: Icon(Icons.refresh)),
+                  IconButton(
+                      onPressed: () async{
+                        String? token = getToken();
+                        context.goNamed(MyAppRouteConstants.defaultRouteName);
+                        await logoutUser(token!);
+                      },
+                      icon: Icon(Icons.logout)),
                 ],
               ),
             ),
@@ -98,7 +68,7 @@ class _HomePageState extends State<HomePage> {
               child: TabBarView(
                 children: [
                   Container(
-                    child: ProfilePage(user: widget.user!, recipes: recipes),
+                    child: ProfilePage(),
                   ),
                   Container(
                     child: CreateActivityPage(),
@@ -107,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                     child: PublicRecipePage(),
                   ),
                   Container(
-                    child: FavoritesPage(user: widget.user!),
+                    child: FavoritesPage(),
                   ),
                 ],
               ),

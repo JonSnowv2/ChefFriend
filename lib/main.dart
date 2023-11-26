@@ -11,6 +11,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'Classes/user.dart';
 import 'Service/user_service.dart';
 import 'dart:html' as html;
+import 'Service/router.dart';
 
 
 String? getToken() {
@@ -18,26 +19,17 @@ String? getToken() {
 }
 
 void main() async {
-  String? token = getToken();
-  User? user;
+  final myAppRouter = MyAppRouter();
 
-  if (token != null){
-    user = await fetchUserData(token);
-    print('yes');
-  }
-
-  if(user != null){
-    print(user.username);
-  }
-  else{
-    print('IT IS NULL');
-  }
-
-
-  runApp(OverlaySupport(
-      child: MaterialApp(
-          theme: new ThemeData(scaffoldBackgroundColor: White_Anti_Flash),
-          home: token == null ? RegisterPage() : HomePage(user: user)
-      )
-  ));
+  runApp(
+    OverlaySupport(
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        theme: new ThemeData(scaffoldBackgroundColor: White_Anti_Flash),
+        routeInformationParser: myAppRouter.router.routeInformationParser,
+        routerDelegate: myAppRouter.router.routerDelegate,
+        routeInformationProvider: myAppRouter.router.routeInformationProvider,
+      ),
+    ),
+  );
 }

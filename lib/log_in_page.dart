@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_app/Service/router.dart';
 import 'package:my_app/Service/user_service.dart';
 import 'package:my_app/Widgets/input_text_password.dart';
 import 'package:my_app/Widgets/message_complete.dart';
@@ -24,7 +26,6 @@ class LogInPage extends StatelessWidget {
   TextEditingController passwordController = TextEditingController();
 
   void logInUser2(String username, String password, BuildContext context) async {
-
     if (_formKey.currentState!.validate()) {
       bool userExists = await checkUserExists(usernameController.text);
 
@@ -36,21 +37,22 @@ class LogInPage extends StatelessWidget {
         });
       }
       else{
-        showOverlayNotification((context) {
-          return CompleteMessage(
-            message: 'Log In Successful!',
-          );
-        });
-          final user = await loginUser(usernameController.text, passwordController.text);
-         if (user != null) {
-           print(user.username);
-           Navigator.push(
-             context,
-             MaterialPageRoute(
-               builder: (context) => HomePage(user: user),
-             ),
-         );
-       }
+        final user = await loginUser(usernameController.text, passwordController.text);
+        if (user != null) {
+          showOverlayNotification((context) {
+            return CompleteMessage(
+              message: 'Log In Successful!',
+            );
+          });
+          context.goNamed(MyAppRouteConstants.appRouteName);
+        }
+        else{
+          showOverlayNotification((context) {
+            return CompleteMessage(
+              message: 'Password Incorrect!',
+            );
+          });
+        }
       }
     }
     else{
@@ -149,7 +151,7 @@ class LogInPage extends StatelessWidget {
                   Text("don't have an account?", style: TextStyle(color: Colors.blue),),
                   TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        context.goNamed(MyAppRouteConstants.registerRouteName);
                       },
                       child: Text("Register", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
                   )

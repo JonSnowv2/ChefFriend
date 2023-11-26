@@ -17,7 +17,7 @@ class PopUpRecipe extends StatelessWidget {
         title: Text(recipe.title),
         content: Container(
           width: MediaQuery.of(context).size.width * 0.8,
-          height: MediaQuery.of(context).size.height * 0.8,
+          height: MediaQuery.of(context).size.height * 0.6,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -28,9 +28,40 @@ class PopUpRecipe extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 5,
-                      child: imageUrl != null
-                          ? Image.network(imageUrl!)
-                          : Container(child: Text("Chef'sFriend"),),
+                      child: Column(
+                        children:[ imageUrl != null
+                            ? Image.network(imageUrl!)
+                            : Container(child: Text("Chef'sFriend"),),
+                          SizedBox(height: 60,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Container(
+                                  decoration: BoxDecoration(
+                                      boxShadow: [shadowImage],
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: White_Anti_Flash
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('Category: ${recipe.category}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                  )
+                              ),
+                              Container(
+                                  decoration: BoxDecoration(
+                                      boxShadow: [shadowImage],
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: White_Anti_Flash
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('Time Taken: ${recipe.timeTaken.toString()} minutes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                  )
+                              ),
+                            ],
+                          ),
+                         ]
+                      ),
                     ),
                     SizedBox(width: 8.0),
                     Expanded(
@@ -60,34 +91,6 @@ class PopUpRecipe extends StatelessWidget {
                                 ],
                               ),
                             ),
-                          ),
-                          SizedBox(height: 60,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                  decoration: BoxDecoration(
-                                      boxShadow: [shadowImage],
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: White_Anti_Flash
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text('Category: ${recipe.category}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
-                                  )
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                    boxShadow: [shadowImage],
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: White_Anti_Flash
-                                ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text('Time Taken: ${recipe.timeTaken.toString()} minutes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
-                                  )
-                              ),
-                            ],
                           ),
                           SizedBox(height: 60,),
                           Row(

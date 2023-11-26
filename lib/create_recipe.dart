@@ -100,7 +100,6 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   }
 
   void _onSubmit(String? token) {
-    if (_selectedImageBase64 != null) {
       int public = isSwitched ? 1 : 0;
       String chefFriend = "Chef'sFriend";
       createRecipe(
@@ -119,7 +118,6 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
           message: 'Recipe created successfully',
         );
       });
-    }
   }
 
   String? getToken() {
@@ -139,12 +137,10 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   ];
 
   void _updateSelectedCategory(String? newCategory) {
-    if (newCategory != null) {
-      setState(() {
-        _selectedCategory = newCategory;
-      });
-    }
-  }
+    setState(() {
+      _selectedCategory = newCategory;
+    });
+}
 
   @override
   Widget build(BuildContext context) {

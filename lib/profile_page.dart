@@ -1,16 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:my_app/Service/recipe_service.dart';
+import 'package:my_app/Service/user_service.dart';
 import 'package:my_app/Styles/Colors.dart';
 import 'package:my_app/Widgets/container_recipe_v2.dart';
 import 'Styles/Shadows.dart';
 import 'Classes/recipe.dart';
 import 'Classes/user.dart';
+import 'dart:html' as html;
 
 class ProfilePage extends StatefulWidget {
-  final User user;
-  List<Recipe> recipes;
 
-  ProfilePage({Key? key, required this.user, required this.recipes}) : super(key: key);
+  ProfilePage({Key? key}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -18,30 +21,68 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   List<Recipe> recipeCopy = [];
+  List<Recipe> fetchedRecipes = [];
+  User? user;
+  bool delayComplete = false;
+
+  String? getToken() {
+    return html.window.localStorage['token'];
+  }
+
+  Future<void> getReipesAndUser() async{
+    String? token = getToken();
+
+    user = await fetchUserData(token!);
+
+
+    List<Map<String,dynamic>> recipeData = await fetchRecipeData(token);
+
+    setState(() {
+      fetchedRecipes = recipeFromJson(json.encode(recipeData));
+    });
+
+    print(fetchedRecipes);
+  }
+
+  void initializeData() async {
+    await getReipesAndUser();
+    setState(() {
+      recipeCopy = List.from(fetchedRecipes);
+    });
+  }
+
+
 
   @override
   void initState(){
     super.initState();
-    recipeCopy = widget.recipes;
+    getReipesAndUser();
+    initializeData();
+    recipeCopy = fetchedRecipes;
+    Future.delayed(Duration(milliseconds: 500), () {
+      setState(() {
+        delayComplete = true;
+      });
+    });
   }
 
   TextEditingController _searchController = TextEditingController();
 
   void _searchByTitle(){
     setState(() {
-      recipeCopy = widget.recipes.where((recipe) => recipe.title.toLowerCase().contains(_searchController.text.toLowerCase())).toList();
+      recipeCopy = fetchedRecipes.where((recipe) => recipe.title.toLowerCase().contains(_searchController.text.toLowerCase())).toList();
     });
   }
 
   void _removeRecipe(Recipe recipe) {
     setState(() {
-      widget.recipes.remove(recipe);
+      recipeCopy.remove(recipe);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return delayComplete == true ? Scaffold(
       body: Container(
         color: White_Anti_Flash,
         child: Column(
@@ -51,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
               child: Text(
-                "Hello, ${widget.user.name}",
+                "Hello, ${user!.name}",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48),
               ),
             ),
@@ -115,6 +156,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
-    );
+    ): Center(child: CircularProgressIndicator(),);
   }
 }
