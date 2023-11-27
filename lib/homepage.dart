@@ -1,73 +1,88 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_app/Service/recipe_service.dart';
+import 'package:my_app/Styles/Colors.dart';
+import 'package:my_app/create_recipe.dart';
+import 'package:my_app/favorites_page.dart';
+import 'package:my_app/public_recies_page.dart';
+import 'package:my_app/unknown_page.dart';
+import 'package:my_app/welcome_page.dart';
 import 'Classes/recipe.dart';
 import 'Classes/user.dart';
+import 'Service/user_service.dart';
 import 'profile_page.dart';
+import 'dart:html' as html;
+import 'Service/router.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+
+  HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Recipe> recipes = [];
+  bool dataFetched = false;
+  User? user;
+
+  String? getToken() {
+    return html.window.localStorage['token'];
+  }
 
   @override
   Widget build(BuildContext context) {
-    User user = User(username: "Darius", password: "Cascador22", recipies: [1, 2]);
-    List<Recipe> recipes = [
-      Recipe(
-        title: "Spaghetti Bologna",
-        description: "This is my new recipe I am very proud",
-        ingredients: ["1 tbsp olive oil", "4 rashers smoked streaky bacon, finely chopped", "2 medium onions, finely chopped", "2 carrots, trimmed and finely chopped", "2 celery sticks, finely chopped", "2 garlic cloves finely chopped", "2-3 sprigs rosemary leaves picked and finely chopped", "500g beef mince"],
-        category: "Main Course",
-        image: "image",
-        instructions: "These are the instructions"
-      ),
-      Recipe(
-          title: "Spaghetti Bologna",
-          description: "This is my new recipe I am very proud",
-          ingredients: ["1 tbsp olive oil", "4 rashers smoked streaky bacon, finely chopped", "2 medium onions, finely chopped", "2 carrots, trimmed and finely chopped", "2 celery sticks, finely chopped", "2 garlic cloves finely chopped", "2-3 sprigs rosemary leaves picked and finely chopped", "500g beef mince"],
-          category: "Main Course",
-          image: "image",
-          instructions: "These are the instructions"
-      )
-    ];
-
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
-        appBar: null,
         body: Column(
           children: [
             Container(
               color: Colors.deepOrange,
-              child: TabBar(
-                labelColor: Colors.blue,
-                unselectedLabelColor: Colors.white,
-                indicatorColor: Colors.blue,
-                tabs: [
-                Tab(icon: Icon(Icons.person), text: "Profile Page",),
-                Tab(icon: Icon(Icons.add), text: "Add Recipe"),
-                Tab(icon: Icon(Icons.home), text: "Recipes"),
-              ],
+              child: Stack(
+                children: [
+                  TabBar(
+                    labelColor: Colors.blue,
+                    unselectedLabelColor: Colors.white,
+                    indicatorColor: Colors.blue,
+                    tabs: [
+                      Tab(icon: Icon(Icons.person), text: "Profile Page"),
+                      Tab(icon: Icon(Icons.add), text: "Add Recipe"),
+                      Tab(icon: Icon(Icons.home), text: "Recipes"),
+                      Tab(icon: Icon(Icons.favorite), text: "Favorites"),
+                    ],
+                  ),
+                  IconButton(
+                      onPressed: () async{
+                        String? token = getToken();
+                        context.goNamed(MyAppRouteConstants.defaultRouteName);
+                        await logoutUser(token!);
+                      },
+                      icon: Icon(Icons.logout)),
+                ],
               ),
             ),
             Expanded(
               child: TabBarView(
-                  children: [
-                    Container(
-                        child: ProfilePage(user: user, recipes: recipes)
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text("2ND TAB"),
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text("3ST TAB"),
-                      ),
-                    ),
-                  ]
+                children: [
+                  Container(
+                    child: ProfilePage(),
+                  ),
+                  Container(
+                    child: CreateActivityPage(),
+                  ),
+                  Container(
+                    child: PublicRecipePage(),
+                  ),
+                  Container(
+                    child: FavoritesPage(),
+                  ),
+                ],
               ),
-            )
-          ]
+            ),
+          ],
         ),
       ),
     );
